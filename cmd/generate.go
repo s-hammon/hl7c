@@ -5,10 +5,13 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 
 	"github.com/s-hammon/hl7c/config"
 	"github.com/spf13/cobra"
 )
+
+var pkgPath string
 
 var generateCmd = &cobra.Command{
 	Use:   "generate",
@@ -17,47 +20,25 @@ var generateCmd = &cobra.Command{
 	
 '<cmd> generate -f config.yaml -p internal/objects'
 	
-This will create a model.go file in ./internal/objects directory`,
+This will create a model.go file at internal/objects in the current working directory.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		configFile, _ := cmd.Flags().GetString("file")
-		packageName, _ := cmd.Flags().GetString("package")
-
-		data, err := os.ReadFile(configFile)
+		abspath, err := filepath.Abs(configFile)
 		if err != nil {
-			fmt.Printf("error reading config file '%s': %v\n", configFile, err)
+			fmt.Println("error reading config file: ", err)
 			os.Exit(1)
 		}
 
-		cfg, err := config.New(data)
-		if err != nil {
-			fmt.Println("error creating config: ", err)
-			os.Exit(1)
-		}
+		pkg, _ := cmd.Flags().GetString("package")
+		models := genModels(abspath, pkg)
 
-		pkg := packageName
-		if cfg.Meta.Package != "" {
-			pkg = cfg.Meta.Package
-		}
-
-		models := cfg.Compile()
-		path, err := saveFile(pkg, models)
+		pkgPath, err = saveFile(pkg, models)
 		if err != nil {
 			fmt.Println("error saving file: ", err)
 			os.Exit(1)
 		}
 
-		fmt.Println(path)
-		command := exec.Command("go", "fmt", path)
-		if err := command.Run(); err != nil {
-			fmt.Println("error formatting models.go: ", err.Error())
-			os.Exit(1)
-		}
-
-		command = exec.Command("go", "get", "./...")
-		if err := command.Run(); err != nil {
-			fmt.Println("error getting dependencies: ", err.Error())
-			os.Exit(1)
-		}
+		shiageru()
 	},
 }
 
@@ -65,7 +46,36 @@ func init() {
 	rootCmd.AddCommand(generateCmd)
 	generateCmd.PersistentFlags().StringP("file", "f", "model_config.yaml", "config file to generate models from")
 	generateCmd.PersistentFlags().StringP("package", "p", "objects", "package to generate models in")
-	generateCmd.PersistentFlags().Lookup("package").NoOptDefVal = "objects"
+}
+
+func shiageru() {
+	command := exec.Command("go", "fmt", pkgPath)
+	if err := command.Run(); err != nil {
+		fmt.Println("error formatting models.go: ", err.Error())
+		os.Exit(1)
+	}
+
+	command = exec.Command("go", "get", "./...")
+	if err := command.Run(); err != nil {
+		fmt.Println("error getting dependencies: ", err.Error())
+		os.Exit(1)
+	}
+}
+
+func genModels(abspath, pkg string) string {
+	data, err := os.ReadFile(abspath)
+	if err != nil {
+		fmt.Printf("error reading config file: %v\n", err)
+		os.Exit(1)
+	}
+
+	cfg, err := config.New(data, pkg)
+	if err != nil {
+		fmt.Println("error creating config: ", err)
+		os.Exit(1)
+	}
+
+	return cfg.Compile()
 }
 
 func saveFile(pkg, data string) (string, error) {

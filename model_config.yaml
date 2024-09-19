@@ -1,5 +1,4 @@
 meta:
-  package: objects
   imports:
     - time
     - "github.com/google/uuid"

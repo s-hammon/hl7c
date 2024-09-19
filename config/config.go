@@ -20,10 +20,17 @@ type Config struct {
 	Types  []CustomType `yaml:"types"`
 }
 
-func New(data []byte) (Config, error) {
+func New(data []byte, pkg string) (Config, error) {
 	var config Config
 	if err := yaml.Unmarshal(data, &config); err != nil {
 		return Config{}, errors.New("error unmarshalling YAML: " + err.Error())
+	}
+
+	if config.Meta.Package == "" {
+		if pkg == "" {
+			return Config{}, errors.New("missing package name")
+		}
+		config.Meta.Package = pkg
 	}
 
 	for _, module := range []string{"encoding/json", "github.com/google/uuid"} {

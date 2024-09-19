@@ -168,7 +168,7 @@ types:
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := New(tt.data)
+			got, err := New(tt.data, "")
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
@@ -265,7 +265,7 @@ func TestNewConfigError(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		if _, err := New(tt.data); err == nil {
+		if _, err := New(tt.data, ""); err == nil {
 			t.Errorf("%s: expected error, got nil", tt.name)
 		}
 	}
@@ -291,7 +291,7 @@ types:
         type: timestamp
 `)
 
-	config, err := New(data)
+	config, err := New(data, "")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}

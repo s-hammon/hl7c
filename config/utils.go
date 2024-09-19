@@ -1,24 +1,9 @@
 package config
 
 import (
-	"errors"
 	"fmt"
-	"os"
 	"strings"
 )
-
-func saveFile(dir, data string) (string, error) {
-	path := fmt.Sprintf("internal/%s", dir)
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		os.MkdirAll(path, 0700)
-	}
-
-	if err := os.WriteFile(path+"/model.go", []byte(data), 0644); err != nil {
-		return "", errors.New("error writing models.go: " + err.Error())
-	}
-
-	return path, nil
-}
 
 func contains(slice []string, s string) bool {
 	for _, v := range slice {
