@@ -3,7 +3,6 @@ package config
 import (
 	"errors"
 	"log"
-	"os/exec"
 	"strconv"
 	"strings"
 
@@ -40,7 +39,7 @@ func New(data []byte) (Config, error) {
 	return config, nil
 }
 
-func (c *Config) AddModels() error {
+func (c *Config) Compile() string {
 	var sb strings.Builder
 
 	sb.WriteString("package " + c.Meta.Package + "\n\n")
@@ -57,24 +56,10 @@ func (c *Config) AddModels() error {
 	sb.WriteString(makeTypes(c.Types))
 	sb.WriteString(makeModels(c.Models))
 
-	path, err := saveFile(c.Meta.Package, sb.String())
-	if err != nil {
-		return err
-	}
-
-	cmd := exec.Command("go", "fmt", path)
-	if err := cmd.Run(); err != nil {
-		return errors.New("error formatting models.go: " + err.Error())
-	}
-
-	return nil
+	return sb.String()
 }
 
 func (c *Config) sanitize() error {
-	if c.Meta.Package == "" {
-		c.Meta.Package = "objects"
-	}
-
 	if len(c.Models) == 0 {
 		return errors.New("no models defined")
 	}
