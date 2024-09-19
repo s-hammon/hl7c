@@ -1,6 +1,6 @@
 # hl7c
 
-hl7c will read a configuration file and generate Go code which represent value objects (types) and entities(models) which represent various business logic within the healthcare space. One could then unmarshal a "JSON-ified" HL7v2 message into these models using the configured JSON tags.
+hl7c is a CLI tool which can read a configuration file and generate Go code containing objects (types) and entities (models) which represent various business logic within the healthcare space. One could then unmarshal a "JSON-ified" HL7v2 message into these models using the configured JSON tags.
 
 ## HL7 in JSON
 
