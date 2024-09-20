@@ -9,7 +9,7 @@ install:
 
 clean:
 	@rm -rf bin
-	@rm -rf internal
+	@rm -rf internal/objects
 	@go mod tidy
 
 out: build install

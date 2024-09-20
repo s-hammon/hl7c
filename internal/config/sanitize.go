@@ -4,69 +4,9 @@ import (
 	"errors"
 	"log"
 	"strconv"
-	"strings"
-
-	"gopkg.in/yaml.v2"
 )
 
-type Meta struct {
-	Package string   `yaml:"package"`
-	Imports []string `yaml:"imports"`
-}
-
-type Config struct {
-	Meta   Meta         `yaml:"meta"`
-	Models []Model      `yaml:"models"`
-	Types  []CustomType `yaml:"types"`
-}
-
-func New(data []byte, pkg string) (Config, error) {
-	var config Config
-	if err := yaml.Unmarshal(data, &config); err != nil {
-		return Config{}, errors.New("error unmarshalling YAML: " + err.Error())
-	}
-
-	if config.Meta.Package == "" {
-		if pkg == "" {
-			return Config{}, errors.New("missing package name")
-		}
-		config.Meta.Package = pkg
-	}
-
-	for _, module := range []string{"encoding/json", "github.com/google/uuid"} {
-		if !contains(config.Meta.Imports, module) {
-			config.Meta.Imports = append(config.Meta.Imports, module)
-		}
-	}
-
-	if err := config.sanitize(); err != nil {
-		return Config{}, err
-	}
-
-	return config, nil
-}
-
-func (c *Config) Compile() string {
-	var sb strings.Builder
-
-	sb.WriteString("package " + c.Meta.Package + "\n\n")
-
-	if len(c.Meta.Imports) > 0 {
-		sb.WriteString("import (\n")
-		for _, imp := range c.Meta.Imports {
-			sb.WriteString("\t\"" + imp + "\"\n")
-		}
-		sb.WriteString(")\n\n")
-	}
-
-	sb.WriteString(createBaseStruct())
-	sb.WriteString(makeTypes(c.Types))
-	sb.WriteString(makeModels(c.Models))
-
-	return sb.String()
-}
-
-func (c *Config) sanitize() error {
+func (c *Config) Sanitize() error {
 	if len(c.Models) == 0 {
 		return errors.New("no models defined")
 	}
@@ -145,5 +85,22 @@ func (c *Config) validateImports(fieldType string) {
 			c.Meta.Imports = append(c.Meta.Imports, "time")
 		}
 		return
+	}
+}
+
+func mapType(yamlType string) string {
+	switch yamlType {
+	case "":
+		return "string"
+	case "string":
+		return "string"
+	case "int":
+		return "int"
+	case "timestamp":
+		return "time.Time"
+	case "uuid":
+		return "uuid.UUID"
+	default:
+		return yamlType
 	}
 }
