@@ -323,7 +323,8 @@ Each of these models extend a `Base` model with fields that you might expect to 
 
 ## Todo
 
-1. Add support to define inbound HL7 JSON structures
-2. Add support to handle deps for other common package types ()
-3. Improve README.md
-4. Be able to read other types of config files (JSON, XML, etc)
+1. ADD TESTS
+2. Add support to define inbound HL7 JSON structures
+3. Add support to handle deps for other common package types ()
+4. Improve README.md
+5. Be able to read other types of config files (JSON, XML, etc)
