@@ -182,10 +182,10 @@ func ParseConfig(rd io.Reader) (Config, error) {
 		return config, err
 	}
 
-	return v2ParseConfig(&buf)
+	return parseConfig(&buf)
 }
 
-func v2ParseConfig(rd io.Reader) (Config, error) {
+func parseConfig(rd io.Reader) (Config, error) {
 	dec := yaml.NewDecoder(rd)
 	dec.KnownFields(true)
 

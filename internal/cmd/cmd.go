@@ -20,6 +20,11 @@ func Do(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 
 	rootCmd.AddCommand(generateCmd)
 
+	rootCmd.SetArgs(args)
+	rootCmd.SetIn(stdin)
+	rootCmd.SetOut(stdout)
+	rootCmd.SetErr(stderr)
+
 	ctx := context.Background()
 	if err := rootCmd.ExecuteContext(ctx); err != nil {
 		if exitError, ok := err.(*exec.ExitError); ok {
@@ -69,8 +74,11 @@ var generateCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		defer trace.StartRegion(cmd.Context(), "writeFile").End()
-		if err := saveFile("internal/objects", output); err != nil {
-			fmt.Fprintf(stderr, "%s: %s\n", dir, err)
+		for path, data := range output {
+			if err := saveFile(path, data); err != nil {
+				fmt.Fprintf(stderr, "%s: %s\n", path, err)
+				os.Exit(1)
+			}
 		}
 
 		shiageru()

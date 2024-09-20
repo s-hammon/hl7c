@@ -1,3 +1,4 @@
+.vscode
 bin/
 *.yaml
-internal/objects
+internal/objectsmodels.go

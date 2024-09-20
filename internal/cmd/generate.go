@@ -22,6 +22,8 @@ func readConfig(stderr io.Writer, dir, filename string) (string, *config.Config,
 			fmt.Fprintln(stderr, "error parsing model_config.yaml: file does not exit")
 			return "", nil, errors.New("model_config.yaml file missing")
 		}
+
+		configPath = yamlPath
 	}
 
 	base := filepath.Base(configPath)
@@ -38,14 +40,16 @@ func readConfig(stderr io.Writer, dir, filename string) (string, *config.Config,
 		return "", nil, err
 	}
 
-	return filepath.Base(dir), &conf, nil
+	return conf.Meta.Package, &conf, nil
 }
 
-func Generate(ctx context.Context, dir, filename string, o *Options) (string, error) {
-	_, conf, err := o.ReadConfig(dir, filename)
+func Generate(ctx context.Context, dir, filename string, o *Options) (map[string]string, error) {
+	pkgDir, conf, err := o.ReadConfig(dir, filename)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return conf.Compile("objects"), nil
+	models := make(map[string]string)
+	models[pkgDir] = conf.Compile(filepath.Base(pkgDir))
+	return models, nil
 }
