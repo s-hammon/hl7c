@@ -64,7 +64,11 @@ func (m *Model) createCustomUnmarshalJSON() string {
 	sb.WriteString("\taux := &struct {\n")
 	for _, field := range m.Fields {
 		if mapType(field.Type) == "time.Time" {
-			customFields[field.Name] = fmt.Sprintf("time.Parse(\"20060102150405\", aux.%s)", field.Name)
+			fmtTime := "20060102150405"
+			if field.Type == "date" {
+				fmtTime = "20060102"
+			}
+			customFields[field.Name] = fmt.Sprintf("time.Parse(\"%s\", aux.%s)", fmtTime, field.Name)
 			sb.WriteString(fmt.Sprintf("\t\t%s string `json:\"%s\"`\n", field.Name, field.Tag))
 		}
 	}
@@ -117,8 +121,12 @@ func (c *CustomType) createCustomUnmarshalJSON() string {
 	sb.WriteString(fmt.Sprintf("\ttype alias %s\n", c.Name))
 	sb.WriteString("\taux := &struct {\n")
 	for _, field := range c.Fields {
-		if field.Type == "time.Time" {
-			customFields[field.Name] = fmt.Sprintf("time.Parse(\"20060102150405\", aux.%s)", field.Name)
+		if mapType(field.Type) == "time.Time" {
+			fmtTime := "20060102150405"
+			if field.Type == "date" {
+				fmtTime = "20060102"
+			}
+			customFields[field.Name] = fmt.Sprintf("time.Parse(\"%s\", aux.%s)", fmtTime, field.Name)
 			sb.WriteString(fmt.Sprintf("\t\t%s string `json:\"%s\"`\n", field.Name, field.Tag))
 		}
 	}

@@ -4,7 +4,7 @@ APP_NAME=hl7c
 build:
 	@go build ./...
 
-install:
+install: build
 	@go install ./...
 
 clean:

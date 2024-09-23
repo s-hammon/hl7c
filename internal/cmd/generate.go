@@ -50,6 +50,7 @@ func Generate(ctx context.Context, dir, filename string, o *Options) (map[string
 	}
 
 	models := make(map[string]string)
-	models[pkgDir] = conf.Compile(filepath.Base(pkgDir))
+	modelDir := filepath.Join("internal/", pkgDir)
+	models[modelDir] = conf.Compile(filepath.Base(pkgDir))
 	return models, nil
 }

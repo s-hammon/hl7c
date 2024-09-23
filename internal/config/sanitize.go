@@ -96,7 +96,7 @@ func mapType(yamlType string) string {
 		return "string"
 	case "int":
 		return "int"
-	case "timestamp":
+	case "timestamp", "date":
 		return "time.Time"
 	case "uuid":
 		return "uuid.UUID"
