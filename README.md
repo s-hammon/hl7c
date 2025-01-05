@@ -84,7 +84,7 @@ For example, an HL7 could be represented as:
 
 HL7--even within the new FHIR standard--has **poor semantic interoperability**, despite being (relatively) syntactically rigorious. Although there are conventions in HL7 structure, in truth one could put any kind of data in HL7 format. In fact, even the delimiters could vary between healthcare organizations, although this is quite rare.
 
-This make developing healthcare applications difficult, as one cannot ensuse that each of their healthcare partners store the exact same information in the exact stame spots--that is, not without expensive and/or cumbersome software which serves as an HL7 integration engine. Further, the core business logic within an application does not--and *should* not--change with "different types" of HL7 messaging.
+This make developing healthcare applications difficult, as one cannot ensure that each of their healthcare partners store the exact same information in the exact stame spots--that is, not without expensive and/or cumbersome software which serves as an HL7 integration engine. Further, the core business logic within an application does not--and *should* not--change with "different types" of HL7 messaging.
 
 The structure of an HL7 message--specifically, a v2 message--is also archaic. Often, restructuring this format (as described above) is a good first step in digesting the data contained within them. This is where hl7c comes into play.
 
