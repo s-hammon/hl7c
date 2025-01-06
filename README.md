@@ -321,10 +321,18 @@ func (m *Patient) UnmarshalJSON(b []byte) error {
 
 Each of these models extend a `Base` model with fields that you might expect to use when working with a normalized database. In addition, hl7c will handle formatting and dependencies under the hood--although, you **must** have already initialized a Go project using `go mod init`. Further, currently this only supports `time.Time` and `uuid.UUID` (from `github.com/google/uuid`) types.
 
+## WIP
+
+**Tests**
+
+* `internal/config`
+  - `config.go`
+  - ~~`sanitize.go`~~
+  - `utils.go`
+
 ## Todo
 
-1. ADD TESTS
-2. Add support to define inbound HL7 JSON structures
-3. Add support to handle deps for other common package types ()
-4. Improve README.md
-5. Be able to read other types of config files (JSON, XML, etc)
+1. Add support to define inbound HL7 JSON structures
+1. Add support to handle deps for other common package types ()
+1. Improve README.md
+1. Be able to read other types of config files (JSON, XML, etc)
