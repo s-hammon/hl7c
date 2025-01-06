@@ -11,7 +11,7 @@ import (
 )
 
 var ErrMissingVersion = errors.New("no version number")
-var ErrNoModels = errors.New("no models")
+var ErrNoModels = errors.New("no defined models")
 
 type versionSetting struct {
 	Number string `yaml:"version"`
