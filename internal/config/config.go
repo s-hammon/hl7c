@@ -201,9 +201,6 @@ func parseConfig(rd io.Reader) (Config, error) {
 	if err := dec.Decode(&conf); err != nil {
 		return conf, err
 	}
-	if len(conf.Models) == 0 {
-		return conf, ErrNoModels
-	}
 
 	for _, module := range []string{"encoding/json", "github.com/google/uuid"} {
 		if !contains(conf.Meta.Imports, module) {
